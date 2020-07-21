@@ -1142,6 +1142,14 @@ func parseOptions(opts *Options, allArgs []string) {
 			opts.Nth = splitNth(nextString(allArgs, &i, "nth expression required"))
 		case "--with-nth":
 			opts.WithNth = splitNth(nextString(allArgs, &i, "nth expression required"))
+		case "--output-nth":
+			// This is a gross POC without any testing - do NOT use
+			outputNth := splitNth(nextString(allArgs, &i, "nth expression required"))
+			opts.Printer = func(str string) {
+				tokens := Tokenize(str, opts.Delimiter)
+				ret := Transform(tokens, outputNth)
+				fmt.Println(joinTokens(ret))
+			}
 		case "-s", "--sort":
 			opts.Sort = optionalNumeric(allArgs, &i, 1)
 		case "+s", "--no-sort":
