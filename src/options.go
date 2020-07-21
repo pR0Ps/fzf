@@ -11,6 +11,7 @@ import (
 
 	"github.com/junegunn/fzf/src/algo"
 	"github.com/junegunn/fzf/src/tui"
+	"github.com/junegunn/fzf/src/util"
 
 	"github.com/mattn/go-runewidth"
 	"github.com/mattn/go-shellwords"
@@ -1231,6 +1232,14 @@ func parseOptions(opts *Options, allArgs []string) {
 		case "--no-print0":
 			opts.Printer = func(str string) { fmt.Println(str) }
 			opts.PrintSep = "\n"
+		case "--output":
+			// This is a gross POC without any testing - do NOT use
+			template := nextString(allArgs, &i, "output template required")
+			opts.Printer = func(str string) {
+				dummy := &Item{text: util.ToChars([]byte(str))}
+				items := []*Item{dummy, dummy}
+				fmt.Println(replacePlaceholder(template, false, Delimiter{}, opts.PrintSep, false, "", items))
+			}
 		case "--print-query":
 			opts.PrintQuery = true
 		case "--no-print-query":
